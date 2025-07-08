@@ -67,7 +67,7 @@ workflows/
 3. 按照模板结构组织文件
 4. 提交Pull Request
 
-详细贡献指南请参考项目根目录的 [CONTRIBUTING.md](../CONTRIBUTING.md) 文件。
+详细贡献指南请参考项目根目录的 [CONTRIBUTING.md](https://github.com/Qinjianbo/n8n_workflow/blob/main/CONTRIBUTING.md) 文件。
 
 ## 📝 工作流模板
 

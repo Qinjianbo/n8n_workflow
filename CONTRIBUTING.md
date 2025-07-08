@@ -20,13 +20,13 @@
    - 在GitHub上fork这个项目到你的账户
    - 克隆你的fork到本地：
    ```bash
-   git clone https://github.com/your-username/n8n_workflow.git
+   git clone https://github.com/Qinjianbo/n8n_workflow.git
    cd n8n_workflow
    ```
 
 2. **设置上游仓库**
    ```bash
-   git remote add upstream https://github.com/original-username/n8n_workflow.git
+   git remote add upstream https://github.com/Qinjianbo/n8n_workflow.git
    ```
 
 ### 2. 创建功能分支

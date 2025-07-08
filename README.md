@@ -1,7 +1,7 @@
 # n8n Workflow Collection
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](CONTRIBUTING.md)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Qinjianbo/n8n_workflow/blob/main/CONTRIBUTING.md)
 [![n8n](https://img.shields.io/badge/n8n-Workflow-orange.svg)](https://n8n.io/)
 
 一个收集和分享实用n8n工作流的开源项目。这里汇集了各种自动化工作流模板，帮助开发者快速构建高效的业务流程自动化解决方案。
@@ -52,7 +52,7 @@
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/your-username/n8n_workflow.git
+   git clone https://github.com/Qinjianbo/n8n_workflow.git
    cd n8n_workflow
    ```
 
@@ -87,7 +87,7 @@
 
 1. **Fork 项目**
    ```bash
-   git clone https://github.com/your-username/n8n_workflow.git
+   git clone https://github.com/Qinjianbo/n8n_workflow.git
    ```
 
 2. **创建功能分支**
@@ -135,7 +135,7 @@ workflows/
 
 如果你在使用过程中遇到问题，请：
 
-1. 查看 [Issues](https://github.com/your-username/n8n_workflow/issues) 页面
+1. 查看 [Issues](https://github.com/Qinjianbo/n8n_workflow/issues) 页面
 2. 搜索是否已有类似问题
 3. 创建新的Issue，并提供详细信息：
    - 工作流名称和版本
@@ -153,9 +153,9 @@ workflows/
 
 ## 📞 联系我们
 
-- 项目主页: [GitHub Repository](https://github.com/your-username/n8n_workflow)
-- 问题反馈: [Issues](https://github.com/your-username/n8n_workflow/issues)
-- 讨论交流: [Discussions](https://github.com/your-username/n8n_workflow/discussions)
+- 项目主页: [GitHub Repository](https://github.com/Qinjianbo/n8n_workflow)
+- 问题反馈: [Issues](https://github.com/Qinjianbo/n8n_workflow/issues)
+- 讨论交流: [Discussions](https://github.com/Qinjianbo/n8n_workflow/discussions)
 
 ---
 
