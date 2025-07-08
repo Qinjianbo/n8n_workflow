@@ -155,7 +155,6 @@ workflows/
 
 - 项目主页: [GitHub Repository](https://github.com/Qinjianbo/n8n_workflow)
 - 问题反馈: [Issues](https://github.com/Qinjianbo/n8n_workflow/issues)
-- 讨论交流: [Discussions](https://github.com/Qinjianbo/n8n_workflow/discussions)
 
 ---
 
