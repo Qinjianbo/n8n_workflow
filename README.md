@@ -112,7 +112,7 @@
 
 ### 工作流提交规范
 
-- **文件命名**: 使用描述性的英文名称，如 `email-automation-workflow.json`
+- **文件命名**: 使用描述性的英文名称，如 `auto-sign-workflow.json`
 - **文档要求**: 每个工作流必须包含README文档
 - **测试要求**: 确保工作流在提交前经过充分测试
 - **代码质量**: 保持工作流的简洁性和可维护性
@@ -125,7 +125,6 @@ workflows/
 │   ├── workflow-name/
 │   │   ├── workflow.json          # 工作流文件
 │   │   ├── README.md              # 使用说明
-│   │   ├── config.example.json    # 配置示例
 │   │   └── screenshots/           # 截图文件夹
 │   └── ...
 └── ...

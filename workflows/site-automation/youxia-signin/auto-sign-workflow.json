@@ -1,0 +1,455 @@
+{
+    "name": "游侠源码网签到",
+    "nodes": [
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "fb41d09b-e2a3-4247-8dad-83204ae6b848",
+                            "name": "successMsg",
+                            "value": "=签到完成：\n签到前金额：{{ $json.balanceBefore }}\n签到后金额：{{ $json.balanceAfter }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                540,
+                -80
+            ],
+            "id": "6441d677-ef32-45f2-aa9e-a1f068a2ed03",
+            "name": "签到成功"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "d5fe3b29-d741-4f98-96a8-c20619b7a9c8",
+                            "name": "failMsg",
+                            "value": "=签到失败：{{ $json.msg }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                540,
+                120
+            ],
+            "id": "d1d8e972-540a-4361-8f3d-aa9f7d442dc7",
+            "name": "签到失败"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('const').item.json.feishuRobotUrl }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "msg_type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "content[text]",
+                            "value": "={{ $json.failMsg }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                760,
+                120
+            ],
+            "id": "cf3e6f27-7283-4f0f-a374-55fe6c888370",
+            "name": "失败通知"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('const').item.json.feishuRobotUrl }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "msg_type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "content[text]",
+                            "value": "={{ $json.successMsg }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                760,
+                -80
+            ],
+            "id": "cfec1564-47ea-4f43-9e22-3a58e2d2204a",
+            "name": "成功通知"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict",
+                        "version": 2
+                    },
+                    "conditions": [
+                        {
+                            "id": "2dfc85f2-0648-4599-8d89-5ca37014c790",
+                            "leftValue": "={{ $json.success }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                300,
+                40
+            ],
+            "id": "d4f3d4fd-46bb-4037-b87e-e748e6313eac",
+            "name": "判断签到结果"
+        },
+        {
+            "parameters": {
+                "operation": "runCustomScript",
+                "scriptCode": "=// 先设置 Cookie\nconst cookieStr = '{{ $json.cookeStr }}';\n\nconst domain = 'uxcode.net';\nconst path = '/';\n\nconst cookies = cookieStr.split(';').map(item => {\n  const [name, ...rest] = item.trim().split('=');\n  return {\n    name,\n    value: rest.join('='),\n    domain,\n    path\n  };\n});\n\nawait $page.setCookie(...cookies);\n\n// 跳转到指定页面\nawait $page.goto(\"https://uxcode.net/user\");\n\n// 简单的停留1s\nawait new Promise((resolve) => {\n  setTimeout(resolve, 1000)\n});\n\nconst loginBtn = await $page.$('button.btn.btn-dark.w-100.go-login');\nif (loginBtn) {\n  return [{success: false, msg: '请重新登录'}];\n}\n\n// 获取当前余额信息\nconst balanceBefore = await $page.$eval(\n  'span.badge.badge-warning-lighten',\n  el => el.textContent.trim()\n);\n\n// 执行签到\nawait $page.waitForSelector('.go-user-qiandao');\nawait $page.click('.go-user-qiandao');\n\n// 重新加载页面，刷新余额\nawait $page.reload();\n\n// 再次获取当前余额信息\nconst balanceAfter = await $page.$eval(\n  'span.badge.badge-warning-lighten',\n  el => el.textContent.trim()\n);\n\n// 简单的停留10s，然后离开\nawait new Promise((resolve) => {\n  setTimeout(resolve, 5000)\n});\n\nreturn [{success: true, balanceBefore: balanceBefore, balanceAfter: balanceAfter}];",
+                "options": {
+                    "browserWSEndpoint": "={{ $json.webSocketDebuggerUrl }}"
+                }
+            },
+            "type": "n8n-nodes-puppeteer.puppeteer",
+            "typeVersion": 1,
+            "position": [
+                100,
+                40
+            ],
+            "id": "5f994ac6-d11b-4b0f-a1d2-fcab9752665a",
+            "name": "执行签到逻辑"
+        },
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "triggerAtHour": 8
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                -280,
+                40
+            ],
+            "id": "edd4b811-a0bb-42f8-a257-1ed961250d62",
+            "name": "定时触发器",
+            "notesInFlow": false
+        },
+        {
+            "parameters": {
+                "content": "## 工作流简介\n### 主要功能：\n1. 实现游侠源码网自动签到\n2. 实现签到结果通知\n### 主要节点\n1. `puppeteer` 社区节点\n2. HTTP节点",
+                "height": 240,
+                "width": 200
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -500,
+                -40
+            ],
+            "id": "3ee194b1-bbb8-48c0-b706-ab430dea30d9",
+            "name": "Sticky Note"
+        },
+        {
+            "parameters": {
+                "content": "#### 定时触发器\n实现定时触发功能",
+                "height": 240,
+                "width": 180
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -300,
+                -40
+            ],
+            "id": "eb4ce6d5-577d-41b3-a422-fe6625d16949",
+            "name": "Sticky Note1"
+        },
+        {
+            "parameters": {
+                "content": "#### `puppeteer`节点\n实现签到功能\n\n**依赖**: `webSocketDebuggerUrl` of chrome\n\n**注意**：cookie 信息需要替换为自己的",
+                "height": 400,
+                "width": 200
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                60,
+                -200
+            ],
+            "id": "2b1b7ae8-1543-43d8-b29a-c7e41fc53d65",
+            "name": "Sticky Note2"
+        },
+        {
+            "parameters": {
+                "content": "#### if 节点\n判定签到结果",
+                "height": 260,
+                "width": 180
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                260,
+                -60
+            ],
+            "id": "fcc9fee7-9972-4117-9d23-febc4f9bd2f3",
+            "name": "Sticky Note3"
+        },
+        {
+            "parameters": {
+                "content": "#### EditFile节点\n构建成功失败消息",
+                "height": 440
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                440,
+                -160
+            ],
+            "id": "2d17fd44-32e6-4cce-8588-a3b599aef126",
+            "name": "Sticky Note4"
+        },
+        {
+            "parameters": {
+                "content": "#### HTTP节点\n发送飞书通知消息\n\n**依赖**: 飞书机器人地址\n\n**注意**：飞书机器人地址需要替换为自己的",
+                "height": 520,
+                "width": 260
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                680,
+                -240
+            ],
+            "id": "c1a65cdc-ed96-4e15-91fd-a628599d68c3",
+            "name": "Sticky Note5"
+        },
+        {
+            "parameters": {
+                "content": "## 如何获取Chrome webSocketDebuggerUrl\n### 第一步\n打开cmd，执行命令：这里以 windows 为示例，chrome.exe 安装位置需要根据实际调整\n\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0 --user-data-dir=\"C:\\chrome-remote-profile\"\n\n### 第二步\n在上面命令执行后跳出的chrome中浏览：http://localhost:9222/json/version\n\n### 第三步\n找到 webSocketDebuggerUrl 并拷贝，将里面的localhost 替换成 host.docker.internal\n替换前：ws://localhost:9222/devtools/browser/7385d425-94be-474b-9f07-296f13d378d7\n替换后：ws://host.docker.internal:9222/devtools/browser/7385d425-94be-474b-9f07-296f13d378d7\n",
+                "height": 340,
+                "width": 760,
+                "color": 5
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -500,
+                200
+            ],
+            "id": "4a94d96e-28db-4ce1-93c7-da2975ad9294",
+            "name": "Sticky Note6"
+        },
+        {
+            "parameters": {
+                "content": "## 如何获取cookieStr信息\n第一步：\n进入到游侠源码网，完成登录\n\n第二步：\n打开浏览器控制台->刷新页面->找到network->找到一个请求并点击->点击Headers->在里面找到cookie字段->复制cookie字段的值",
+                "height": 260,
+                "width": 680,
+                "color": 4
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                260,
+                280
+            ],
+            "id": "40547ac4-ef2b-43a0-85a7-023cd6a645f5",
+            "name": "Sticky Note7"
+        },
+        {
+            "parameters": {
+                "content": "## const\n在这里设置一些常量",
+                "height": 280,
+                "width": 180
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -120,
+                -80
+            ],
+            "id": "f67801cc-0417-4b4a-ac4b-12b2530640f3",
+            "name": "Sticky Note8"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "4dea8c10-b161-4f1b-b544-c54e424dbf7c",
+                            "name": "webSocketDebuggerUrl",
+                            "value": "填写可供使用的browserWebsocketEndpoint",
+                            "type": "string"
+                        },
+                        {
+                            "id": "2a97cbda-1fd0-45b9-9886-13965fa18d3d",
+                            "name": "cookeStr",
+                            "value": "填写游侠网登录cookie",
+                            "type": "string"
+                        },
+                        {
+                            "id": "388669c9-c7f1-4839-8244-a4b967a010bf",
+                            "name": "feishuRobotUrl",
+                            "value": "填写飞书机器人通知地址",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                -80,
+                40
+            ],
+            "id": "e2a5f6ee-ca19-4777-b73b-99da894ce8f5",
+            "name": "const"
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "签到成功": {
+            "main": [
+                [
+                    {
+                        "node": "成功通知",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "签到失败": {
+            "main": [
+                [
+                    {
+                        "node": "失败通知",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "判断签到结果": {
+            "main": [
+                [
+                    {
+                        "node": "签到成功",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "签到失败",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "执行签到逻辑": {
+            "main": [
+                [
+                    {
+                        "node": "判断签到结果",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "定时触发器": {
+            "main": [
+                [
+                    {
+                        "node": "const",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "const": {
+            "main": [
+                [
+                    {
+                        "node": "执行签到逻辑",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1",
+        "timezone": "Asia/Shanghai",
+        "callerPolicy": "workflowsFromSameOwner"
+    },
+    "versionId": "a4a7a757-abea-418b-9940-fa893f30f630",
+    "meta": {
+        "instanceId": "2f1ce8ea57c024a580bef98010b7171e5cb83da9fbd5c3219ab48aac1459d4be"
+    },
+    "id": "StkmzHTZt1hCgsZT",
+    "tags": []
+}
