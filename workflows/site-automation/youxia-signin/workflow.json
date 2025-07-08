@@ -224,7 +224,7 @@
         },
         {
             "parameters": {
-                "content": "#### `puppeteer`节点\n实现签到功能\n\n**依赖**: `webSocketDebuggerUrl` of chrome\n\n**注意**：cookie 信息需要替换为自己的",
+                "content": "#### `puppeteer`节点\n实现签到功能\n\n**依赖**: `webSocketDebuggerUrl` of chrome在常量节点配置\n\n`cookieStr` 在常量节点配置",
                 "height": 400,
                 "width": 200
             },
@@ -268,7 +268,7 @@
         },
         {
             "parameters": {
-                "content": "#### HTTP节点\n发送飞书通知消息\n\n**依赖**: 飞书机器人地址\n\n**注意**：飞书机器人地址需要替换为自己的",
+                "content": "#### HTTP节点\n发送飞书通知消息\n\n**依赖**: 飞书机器人地址，在常量节点配置",
                 "height": 520,
                 "width": 260
             },
@@ -315,7 +315,7 @@
         },
         {
             "parameters": {
-                "content": "## const\n在这里设置一些常量",
+                "content": "## const\n在这里设置一些常量\n1. 游侠网登录cookie\n2. 飞书机器人通知地址\n3. 浏览器webSocket地址",
                 "height": 280,
                 "width": 180
             },
