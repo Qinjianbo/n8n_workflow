@@ -1,0 +1,391 @@
+{
+    "name": "获取steam支付成功订单",
+    "nodes": [
+        {
+            "parameters": {
+                "fieldToSplitOut": "response.params.orders",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitOut",
+            "typeVersion": 1,
+            "position": [
+                -120,
+                380
+            ],
+            "id": "2a6c9129-3ca1-490c-a75d-39904473d2ed",
+            "name": "解析出订单信息"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "ff5ce090-c2e8-4fb0-8e6e-60bc51713c02",
+                            "name": "currentDate",
+                            "value": "={{ $('定时触发').item.json.timestamp.toDateTime().format('yyyy-MM-dd') }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                -340,
+                -40
+            ],
+            "id": "bf6cd7fd-fcaf-4bc0-8a7c-8d191d03c5e4",
+            "name": "格式化时间"
+        },
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "triggerAtHour": 18,
+                            "triggerAtMinute": 30
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                -520,
+                -40
+            ],
+            "id": "d9127da9-bb41-4f95-8a05-07ba50baecce",
+            "name": "定时触发"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict",
+                        "version": 2
+                    },
+                    "conditions": [
+                        {
+                            "id": "47c9230c-92f4-447b-af59-64433791a314",
+                            "leftValue": "={{ $json.response.params.count }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                -460,
+                300
+            ],
+            "id": "eb2837a2-f300-49d9-8296-4780139985a5",
+            "name": "If"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $json.feishuRobotUrl }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "msg_type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "content[text]",
+                            "value": "={{ $json.feishuContent }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                540,
+                380
+            ],
+            "id": "afc802fe-9f5e-44c0-b46b-19ab8ec605ea",
+            "name": "订单数据通知"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "27c0b730-ec57-404e-8aab-e442115cb212",
+                            "name": "appId",
+                            "value": "填写steam应用id",
+                            "type": "string"
+                        },
+                        {
+                            "id": "1bb99edc-bcaa-457e-b4d6-04a83372ca95",
+                            "name": "appKey",
+                            "value": "填写steam应用key",
+                            "type": "string"
+                        },
+                        {
+                            "id": "9b538eb6-3aaf-4773-a799-704d69b2fba4",
+                            "name": "currentDate",
+                            "value": "={{ $json.currentDate }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "488898af-6ebc-4cca-a925-2cf9456cb38d",
+                            "name": "feishuRobotUrl",
+                            "value": "填写飞书机器人通知地址",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                -160,
+                -40
+            ],
+            "id": "9cff81e6-621c-4be5-830e-70ba34540e5e",
+            "name": "常量设置"
+        },
+        {
+            "parameters": {
+                "url": "=https://partner.steam-api.com/ISteamMicroTxn/GetReport/v5/?key={{ $json.appKey }}&appid={{ $json.appId }}&maxresults=10000&type=GAMESALES&time={{ $json.currentDate }}T00:00:00Z",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                100,
+                -40
+            ],
+            "id": "6c2cac62-7052-45b7-8608-67e87e52f21a",
+            "name": "steam订单数据请求",
+            "retryOnFail": true
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('常量设置').item.json.feishuRobotUrl }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "msg_type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "content[text]",
+                            "value": "=vgame2-steam充值: \n日期：{{ $('常量设置').item.json.currentDate }}\n消息：无订单数据"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -120,
+                200
+            ],
+            "id": "a9f64de2-92fe-4b46-92a8-afb7b8108fa4",
+            "name": "无订单提醒通知"
+        },
+        {
+            "parameters": {
+                "content": "## 工作流简介\n### 主要功能\n实现了定时查询steam订单列表并汇总后发送飞书通知，已达到监控目的。\n\n### 主要节点\n1. HTTP 请求节点",
+                "height": 300,
+                "width": 260
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -820,
+                -180
+            ],
+            "id": "eac08d2b-8635-43e4-a837-dad094ef7a42",
+            "name": "Sticky Note"
+        },
+        {
+            "parameters": {
+                "content": "### 常量设置\n在此节点中设置后续节点依赖的常量：\n1. appId\n2. appKey\n3. 时间\n4. 飞书通知地址",
+                "height": 320,
+                "width": 280
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -220,
+                -200
+            ],
+            "id": "0edc3652-494d-4f6a-a55d-39470f55fbbf",
+            "name": "Sticky Note1"
+        },
+        {
+            "parameters": {
+                "jsCode": "const items = $input.all();\n\nconst fraudStatus = [\n  \"Refunded\",\n  \"Chargedback\",\n  \"RefundedSuspectedFraud\",\n  \"RefundedFriendlyFraud\"\n];\n\nconst result = {};\n\n// 初始化分组\nfor (const item of items) {\n  const status = item.json.status;\n  if (!result[status]) {\n    result[status] = {\n      status,\n      totalAmount: 0,\n      orderCount: 0,\n      steamIds: fraudStatus.includes(status) ? [] : undefined\n    };\n  }\n  // 订单金额累加（假设每个订单只有一个商品，且amount为分/元等）\n  let orderAmount = 0;\n  if (Array.isArray(item.json.items)) {\n    for (const sub of item.json.items) {\n      orderAmount += Number(sub.amount || 0);\n    }\n  }\n  result[status].totalAmount += orderAmount;\n  result[status].orderCount += 1;\n  // 欺诈/退款类，收集steamId\n  if (fraudStatus.includes(status)) {\n    result[status].steamIds.push(item.json.steamid);\n  }\n}\n\n// 输出每个分组为一个 item\nreturn Object.values(result).map(group => ({\n  json: group\n}));"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                120,
+                380
+            ],
+            "id": "9a65a280-8302-49a1-93a5-0dbd0098af7e",
+            "name": "更具订单状态对订单进行分组"
+        },
+        {
+            "parameters": {
+                "jsCode": "const items = $input.all();\n\nconst statusDesc = {\n  \"Succeeded\": \"订单已成功处理\",\n  \"Refunded\": \"订单已退款，游戏应撤销该产品。顾客能自行发起退款。\",\n  \"Chargedback\": \"订单存在欺诈或争议，游戏应撤销该产品。\",\n  \"RefundedSuspectedFraud\": \"因涉嫌欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\",\n  \"RefundedFriendlyFraud\": \"因被认定为友好欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\"\n};\n\nlet content = '【订单统计通知】';\n\nfor (const item of items) {\n  const { status, totalAmount, orderCount, steamIds } = item.json;\n  const desc = statusDesc[status] || '';\n  if (desc == '') {\n    continue\n  }\n  content += `状态：${status}（${desc}）\\n订单数量：${orderCount}\\n订单总金额：${totalAmount}\\n`;\n  if (steamIds && steamIds.length > 0) {\n    content += `涉及SteamID：${steamIds.join(', ')}\\n`;\n  }\n}\n\nreturn [\n  {\n    json: {\n      feishuContent: content\n    }\n  }\n];"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                340,
+                380
+            ],
+            "id": "86bfd99d-b641-43a4-bd7d-b3d57af0c093",
+            "name": "对分组数据进行计算"
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "解析出订单信息": {
+            "main": [
+                [
+                    {
+                        "node": "更具订单状态对订单进行分组",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "格式化时间": {
+            "main": [
+                [
+                    {
+                        "node": "常量设置",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "定时触发": {
+            "main": [
+                [
+                    {
+                        "node": "格式化时间",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "If": {
+            "main": [
+                [
+                    {
+                        "node": "无订单提醒通知",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "解析出订单信息",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "常量设置": {
+            "main": [
+                [
+                    {
+                        "node": "steam订单数据请求",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "steam订单数据请求": {
+            "main": [
+                [
+                    {
+                        "node": "If",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "更具订单状态对订单进行分组": {
+            "main": [
+                [
+                    {
+                        "node": "对分组数据进行计算",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "对分组数据进行计算": {
+            "main": [
+                [
+                    {
+                        "node": "订单数据通知",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1",
+        "timezone": "Asia/Shanghai",
+        "callerPolicy": "workflowsFromSameOwner"
+    },
+    "versionId": "d6c58101-7292-46ab-953e-50878f8970b9",
+    "meta": {
+        "instanceId": "2f1ce8ea57c024a580bef98010b7171e5cb83da9fbd5c3219ab48aac1459d4be"
+    },
+    "id": "AhW0cUFfm1GDjFU6",
+    "tags": []
+}
