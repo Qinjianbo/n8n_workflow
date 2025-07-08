@@ -11,6 +11,7 @@ workflows/
 ├── data-processing/         # 数据处理
 ├── system-integration/      # 系统集成
 ├── notifications/           # 通知与提醒
+├── site-automation/         # 网站自动化
 └── README.md               # 本文件
 ```
 
@@ -51,6 +52,10 @@ workflows/
 - 异常监控告警
 - 状态更新通知
 
+### site-automation/ - 网站自动化
+网站自动脚本
+- 自动签到脚本
+
 ## 📖 使用指南
 
 1. **浏览分类**: 根据你的需求选择合适的工作流分类
@@ -74,7 +79,6 @@ workflows/
 每个工作流都应包含：
 - `workflow.json` - 工作流文件
 - `README.md` - 使用说明
-- `config.example.json` - 配置示例（可选）
 - `screenshots/` - 截图文件夹（可选）
 
 ## 🔍 搜索工作流
