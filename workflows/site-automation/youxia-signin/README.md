@@ -44,6 +44,8 @@
    ws://host.docker.internal:9222/devtools/browser/xxxxxx
    ```
 
+**替代方案参考puppeteer节点介绍**：https://www.npmjs.com/package/n8n-nodes-puppeteer
+
 ## 如何获取cookieStr信息
 
 1. 进入游侠源码网，完成登录
