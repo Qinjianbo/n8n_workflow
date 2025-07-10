@@ -223,7 +223,7 @@
         },
         {
             "parameters": {
-                "content": "## 工作流简介\n### 主要功能\n实现了定时查询steam订单列表并汇总后发送飞书通知，已达到监控目的。\n\n### 主要节点\n1. HTTP 请求节点",
+                "content": "## 工作流简介\n### 主要功能\n实现了定时查询steam订单列表并汇总后发送飞书通知，已达到监控目的。\n\n### 主要节点\n1. Schedule Trigger 节点\n2. HTTP 请求节点",
                 "height": 300,
                 "width": 260
             },
@@ -266,7 +266,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const items = $input.all();\n\nconst statusDesc = {\n  \"Succeeded\": \"订单已成功处理\",\n  \"Refunded\": \"订单已退款，游戏应撤销该产品。顾客能自行发起退款。\",\n  \"Chargedback\": \"订单存在欺诈或争议，游戏应撤销该产品。\",\n  \"RefundedSuspectedFraud\": \"因涉嫌欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\",\n  \"RefundedFriendlyFraud\": \"因被认定为友好欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\"\n};\n\nlet content = '【订单统计通知】';\n\nfor (const item of items) {\n  const { status, totalAmount, orderCount, steamIds } = item.json;\n  const desc = statusDesc[status] || '';\n  if (desc == '') {\n    continue\n  }\n  content += `状态：${status}（${desc}）\\n订单数量：${orderCount}\\n订单总金额：${totalAmount}\\n`;\n  if (steamIds && steamIds.length > 0) {\n    content += `涉及SteamID：${steamIds.join(', ')}\\n`;\n  }\n}\n\nreturn [\n  {\n    json: {\n      feishuContent: content\n    }\n  }\n];"
+                "jsCode": "const items = $input.all();\n\nconst statusDesc = {\n  \"Succeeded\": \"订单已成功处理\",\n  \"Refunded\": \"订单已退款，游戏应撤销该产品。顾客能自行发起退款。\",\n  \"Chargedback\": \"订单存在欺诈或争议，游戏应撤销该产品。\",\n  \"RefundedSuspectedFraud\": \"因涉嫌欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\",\n  \"RefundedFriendlyFraud\": \"因被认定为友好欺诈，该订单已被 Valve 退款。该产品应当由游戏撤销。\"\n};\n\nlet content = '';\n\nfor (const item of items) {\n  const { status, totalAmount, orderCount, steamIds } = item.json;\n  const desc = statusDesc[status] || '';\n  if (desc == '') {\n    continue\n  }\n  content += `状态：${status}（${desc}）\\n订单数量：${orderCount}\\n订单总金额：${totalAmount}\\n`;\n  if (steamIds && steamIds.length > 0) {\n    content += `涉及SteamID：${steamIds.join(', ')}\\n`;\n  }\n}\n\nif (content == '') {\n  const date = $('常量设置').first().json.currentDate\n  return [\n    {\n      json: {\n        feishuContent: 'vgame2-steam充值:\\n' + `日期: ${date}\\n` +'消息:无订单数据',\n        feishuRobotUrl: $('常量设置').first().json.feishuRobotUrl\n      }\n    }\n  ]\n} else {\n  content = 'vgame2-steam充值:\\n' + content\n}\n\nreturn [\n  {\n    json: {\n      feishuContent: content,\n      feishuRobotUrl: $('常量设置').first().json.feishuRobotUrl\n    }\n  }\n];"
             },
             "type": "n8n-nodes-base.code",
             "typeVersion": 2,
@@ -382,7 +382,7 @@
         "timezone": "Asia/Shanghai",
         "callerPolicy": "workflowsFromSameOwner"
     },
-    "versionId": "d6c58101-7292-46ab-953e-50878f8970b9",
+    "versionId": "b5ba4732-3d2c-4b86-9c87-aaedbf10f351",
     "meta": {
         "instanceId": "2f1ce8ea57c024a580bef98010b7171e5cb83da9fbd5c3219ab48aac1459d4be"
     },
