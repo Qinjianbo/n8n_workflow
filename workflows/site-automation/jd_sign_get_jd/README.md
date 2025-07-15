@@ -1,8 +1,8 @@
-# 京东京豆自动签到工作流
+# 京东自动签到获取京豆工作流
 
 ## 功能简介
 
-本工作流实现了京东京豆的自动签到，并通过飞书机器人推送签到结果通知。
+本工作流实现了京东的自动签到，并通过飞书机器人推送签到结果通知。
 
 - 自动定时签到领京豆
 - 支持cookie配置
@@ -55,7 +55,7 @@
 
 请将 `config.example.json` 复制为 `config.json`，并根据实际情况填写：
 
-- `cookieStr`：你的京东京豆cookie
+- `cookieStr`：你的京东登录cookie
 - `webSocketDebuggerUrl`：你的chrome调试地址
 - `feishuWebhook`：你的飞书机器人webhook地址
 
