@@ -1,0 +1,536 @@
+{
+  "name": "京东签到领京豆_过期登录版",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb41d09b-e2a3-4247-8dad-83204ae6b848",
+              "name": "successMsg",
+              "value": "=JD京豆签到完成：\n签到前金豆：{{ $json.balanceBefore }}\n签到后金豆：{{ $json.balanceAfter }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1400,
+        160
+      ],
+      "id": "0dce8b92-0728-4bb3-a34c-824c32ade1c7",
+      "name": "签到成功"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d5fe3b29-d741-4f98-96a8-c20619b7a9c8",
+              "name": "failMsg",
+              "value": "=签到失败：{{ $json.msg }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1400,
+        360
+      ],
+      "id": "78c05582-d5b4-4be1-8b47-8b7926d10a80",
+      "name": "签到失败"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('const').item.json.feishuRobotUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "msg_type",
+              "value": "text"
+            },
+            {
+              "name": "content[text]",
+              "value": "={{ $json.failMsg }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1620,
+        360
+      ],
+      "id": "90115648-f70a-4410-9e1b-7d2da9554fa6",
+      "name": "失败通知"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('const').item.json.feishuRobotUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "msg_type",
+              "value": "text"
+            },
+            {
+              "name": "content[text]",
+              "value": "={{ $json.successMsg }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1620,
+        160
+      ],
+      "id": "053aac40-8201-455e-9603-68d34e34523c",
+      "name": "成功通知"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2dfc85f2-0648-4599-8d89-5ca37014c790",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        280
+      ],
+      "id": "ecdeda9e-0f7f-4a11-9c22-7d6388686956",
+      "name": "判断签到结果"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            },
+            {
+              "triggerAtHour": 12,
+              "triggerAtMinute": 30
+            },
+            {
+              "triggerAtHour": 19,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        280
+      ],
+      "id": "d5a3dc4f-fac1-4406-8112-ba30ccc12775",
+      "name": "定时触发器",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "content": "## 工作流简介\n### 主要功能：\n1. 实现京东京豆自动签到\n2. 实现签到结果通知\n### 主要节点\n1. `puppeteer` 社区节点\n2. HTTP节点",
+        "height": 240,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        220
+      ],
+      "id": "5882714e-7531-4294-a85c-803d882d2cdb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "#### 定时触发器\n实现定时触发功能",
+        "height": 240,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        220
+      ],
+      "id": "64e4c1df-64d8-463c-be85-200500f53691",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "#### if 节点\n判定签到结果",
+        "height": 260,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        180
+      ],
+      "id": "aaa3e76f-665c-400e-b4c2-eca33e44b817",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "#### EditFile节点\n构建成功失败消息",
+        "height": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        80
+      ],
+      "id": "bce6757e-8a7a-47d0-a0c5-56e64c4b6206",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "#### HTTP节点\n发送飞书通知消息\n\n**依赖**: 飞书机器人地址，在常量节点配置",
+        "height": 480,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        40
+      ],
+      "id": "c7eaf836-fcc3-4439-9e2f-3afd58843f2c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 如何获取Chrome webSocketDebuggerUrl\n### 第一步\n打开cmd，执行命令：这里以 windows 为示例，chrome.exe 安装位置需要根据实际调整\n\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0 --user-data-dir=\"C:\\chrome-remote-profile\"\n\n### 第二步\n在上面命令执行后跳出的chrome中浏览：http://localhost:9222/json/version\n\n### 第三步\n找到 webSocketDebuggerUrl 并拷贝，将里面的localhost 替换成 host.docker.internal\n替换前：ws://localhost:9222/devtools/browser/7385d425-94be-474b-9f07-296f13d378d7\n替换后：ws://host.docker.internal:9222/devtools/browser/7385d425-94be-474b-9f07-296f13d378d7\n",
+        "height": 340,
+        "width": 760,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        360,
+        460
+      ],
+      "id": "61d34bef-1681-47a1-8529-1298986545b3",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## 如何获取cookieStr信息\n第一步：\n进入到京东pc版，jd.com，完成登录\n\n第二步：\n打开浏览器控制台->刷新页面->找到network->找到一个请求并点击->点击Headers->在里面找到cookie字段->复制cookie字段的值",
+        "height": 260,
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        520
+      ],
+      "id": "147fe830-de7d-4583-96a8-3d5d961977be",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## const\n在这里设置一些常量\n1. 飞书通知地址\n2. Websocket地址",
+        "height": 320,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        580,
+        140
+      ],
+      "id": "4f7a338e-6904-46d8-8b7d-2924120ad023",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4dea8c10-b161-4f1b-b544-c54e424dbf7c",
+              "name": "webSocketDebuggerUrl",
+              "value": "请在此处填写Websocket地址",
+              "type": "string"
+            },
+            {
+              "id": "388669c9-c7f1-4839-8244-a4b967a010bf",
+              "name": "feishuRobotUrl",
+              "value": "请在此处填写飞书机器人地址",
+              "type": "string"
+            },
+            {
+              "id": "6dc1e9e7-8db5-49b9-b711-6ee38e2b9d0e",
+              "name": "app_id",
+              "value": "请在此处填写飞书app_id",
+              "type": "string"
+            },
+            {
+              "id": "d9df8293-7256-4d61-a6d9-6c43862f76b4",
+              "name": "app_secret",
+              "value": "请在此处填写飞书app_secret",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        620,
+        280
+      ],
+      "id": "536efcec-704f-4b61-bffa-77007649cbdb",
+      "name": "const"
+    },
+    {
+      "parameters": {
+        "content": "## 获取token\n1. 用于获取飞书消息图片上传token",
+        "height": 320,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        760,
+        140
+      ],
+      "id": "53cc2d8d-25fd-47c0-a805-1cfc5f0d8597",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "app_id",
+              "value": "={{ $json.app_id }}"
+            },
+            {
+              "name": "app_secret",
+              "value": "={{ $json.app_secret }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        280
+      ],
+      "id": "eaeda401-5b94-45d6-8787-3fac0072ff13",
+      "name": "获取token"
+    },
+    {
+      "parameters": {
+        "content": "## 登录并签到\n1. 获取登录二维码\n2. 上传到飞书消息图片\n3. 等待扫码登录后执行签到",
+        "height": 320,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        140
+      ],
+      "id": "597a1d21-ed88-4697-85d1-e77c4f77a683",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "runCustomScript",
+        "scriptCode": "=// 跳转到指定页面\nawait $page.goto(\"https://bean.jd.com/myJingBean/list\");\n\nconst loginBtn = await $page.$('#sms-login-form');\nif (loginBtn) {\n  // 获取登录二维码截图\n  const qrCodeImgId = 'img#passport-main-qrcode-img';\n  await $page.waitForSelector(qrCodeImgId);\n  // 获取截图base64\n  const qrCodeEle = await $page.$(qrCodeImgId);\n  const qrCodeBase64 = await qrCodeEle.screenshot({ encoding: 'base64', type: 'png' });\n  \n  // 防止上传图片跨域，打开飞书网页\n  const feishuPage = await $browser.newPage();\n  await feishuPage.goto(\"https://open.feishu.cn/\")\n  const feishuToken = '{{ $json.tenant_access_token }}';\n  // 简单的停留1s\n  await new Promise((resolve) => {\n    setTimeout(resolve, 1000)\n  });\n  feishuPage.evaluate((imgBase64,token) => {\n    console.log('开始上传到飞书...');\n    console.log('Base64长度:', imgBase64.length);\n  \n    // 转base64为Blob\n    const byteCharacters = atob(imgBase64);\n    const byteNumbers = new Array(byteCharacters.length);\n    for (let i = 0; i < byteCharacters.length; i++) {\n      byteNumbers[i] = byteCharacters.charCodeAt(i);\n    }\n    const byteArray = new Uint8Array(byteNumbers); // 修复：bytes -> byteArray\n    const contentType = 'image/png';\n    const imgBlob = new Blob([byteArray], { type: contentType }); // 修复：bytes -> byteArray\n    \n    console.log('重新创建的Blob大小:', imgBlob.size);\n    console.log('重新创建的Blob类型:', imgBlob.type);\n    \n    // 创建FormData\n    const formData = new FormData();\n    formData.append('image_type', 'message');\n    formData.append('image', imgBlob, 'qrcode.png');\n    console.log('FormData创建完成:', formData);\n    // 发送请求\n    fetch('https://open.feishu.cn/open-apis/im/v1/images', {\n      method: 'POST',\n      headers: {\n        'Authorization': 'Bearer ' + '{{ $json.tenant_access_token }}'\n      },\n      body: formData\n    }).then((response) => {\n      const respJson = response.json();\n      console.log(\"上传图片响应:\", respJson);\n      return respJson;\n    }).then((respJson) => {\n      // 发送消息到飞书，等待登录\n      const imageKey = respJson.data.image_key;\n      fetch('{{ $('const').item.json.feishuRobotUrl }}', {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({\n          msg_type: \"image\",\n          content: { image_key: `${imageKey}` }\n        })\n      });\n    });\n  }, qrCodeBase64, feishuToken);\n  \n  // 简单的停留30s,等待用户扫码完成\n  await new Promise((resolve) => {\n    setTimeout(resolve, 20000)\n  });\n  // 关闭飞书页面\n  feishuPage.close();\n}\n\n// 跳转到指定页面\nawait $page.goto(\"https://bean.jd.com/myJingBean/list\");\nawait $page.setViewport({ width: 1200, height: 900 });\n\n// 简单的停留1s\nawait new Promise((resolve) => {\n  setTimeout(resolve, 1000)\n});\n\n// 获取当前余额信息\nconst balanceBefore = await $page.$eval(\n  'div.my-card-bean-num',\n  el => el.textContent.trim()\n);\n\n// 执行签到\nawait $page.waitForSelector('#mybean-sign .btn');\nawait $page.click('#mybean-sign .btn');\n\n// 简单的停留2s,等待余额加上\nawait new Promise((resolve) => {\n  setTimeout(resolve, 2000)\n});\n\n// 重新加载页面，刷新余额\nawait $page.reload();\n\n// 再次获取当前余额信息\nconst balanceAfter = await $page.$eval(\n  'div.my-card-bean-num',\n  el => el.textContent.trim()\n);\n\n// 简单的停留10s，然后离开\nawait new Promise((resolve) => {\n  setTimeout(resolve, 5000)\n});\n\nreturn [{success: true, balanceBefore: balanceBefore, balanceAfter: balanceAfter}];\n",
+        "options": {
+          "browserWSEndpoint": "={{ $('const').item.json.webSocketDebuggerUrl }}",
+          "timeout": 400000,
+          "protocolTimeout": 400000,
+          "headless": true
+        }
+      },
+      "type": "n8n-nodes-puppeteer.puppeteer",
+      "typeVersion": 1,
+      "position": [
+        980,
+        280
+      ],
+      "id": "fe528c88-24b4-45b3-a97a-1b635e953a58",
+      "name": "登录并签到"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "签到成功": {
+      "main": [
+        [
+          {
+            "node": "成功通知",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "签到失败": {
+      "main": [
+        [
+          {
+            "node": "失败通知",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "判断签到结果": {
+      "main": [
+        [
+          {
+            "node": "签到成功",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "签到失败",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "定时触发器": {
+      "main": [
+        [
+          {
+            "node": "const",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "const": {
+      "main": [
+        [
+          {
+            "node": "获取token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "获取token": {
+      "main": [
+        [
+          {
+            "node": "登录并签到",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "登录并签到": {
+      "main": [
+        [
+          {
+            "node": "判断签到结果",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Shanghai",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "bbaca74c-f542-4786-94d2-2e9e3cfe5493",
+  "meta": {
+    "instanceId": "b14ed51f9f211762690683f6004123aed80c77b063f7f2ed706fbafa83517554"
+  },
+  "id": "vfcqJYpHbk9qToEl",
+  "tags": []
+}
