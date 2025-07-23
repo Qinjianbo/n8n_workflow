@@ -1,0 +1,349 @@
+{
+  "name": "文件处理",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -100
+      ],
+      "id": "bcc39ffe-2385-480f-8fc7-c9ba3e39d834",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## N8N docker部署命令: windows cmd版\ndocker run -it --rm --name n8n --network n8n-net -p 5678:5678 -e N8N_RUNNERS_ENABLED=true -e N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true -e TZ=Asia/Shanghai -v n8n_data:/home/node/.n8n -v E:\\\\n8n_data:/home/node/n8n_data docker.n8n.io/n8nio/n8n\n\nE:\\\\n8n_data:/home/node/n8n_data: 这个挂载目录可以自行调整，作用是让docker实例内部与外部寄主机共享文件数据",
+        "height": 140,
+        "width": 1100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -500
+      ],
+      "id": "d42fef31-019d-4112-b01b-c5afe4e2c14b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/node/n8n_data/test.png",
+        "options": {
+          "fileExtension": ".png",
+          "fileName": "test.png",
+          "mimeType": "image/png",
+          "dataPropertyName": "image_png"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -180
+      ],
+      "id": "8ac12ff7-0913-4e3a-8255-3f97bb8bc5f1",
+      "name": "图片读取"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/node/n8n_data/test.csv",
+        "options": {
+          "fileExtension": ".csv",
+          "fileName": "test.csv",
+          "dataPropertyName": "test_csv"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        0
+      ],
+      "id": "c80938ce-a3fe-402e-a3b5-a5969579bd00",
+      "name": "csv文件读取"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "test_csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        120,
+        140
+      ],
+      "id": "1fbf1eaf-5e80-4f03-8bf0-317c1247d956",
+      "name": "将文件内容解析成可处理形式"
+    },
+    {
+      "parameters": {
+        "operation": "blur",
+        "dataPropertyName": "image_png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        120,
+        -200
+      ],
+      "id": "853fec2f-914c-49ed-97d8-7eadef4c84e7",
+      "name": "对图片进行处理"
+    },
+    {
+      "parameters": {
+        "content": "## 文件读取\n文件读取节点可以处理很多类型的文件，例如：csv、png、xml、text等\n**注意**：此节点只能读取n8n部署机器上的本地文件，不能处理远程文件",
+        "height": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -360
+      ],
+      "id": "6cacb06f-b43e-4edb-9016-44a9f010836f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 图片处理\n图片处理节点可以对图片进行调整，例如：模糊处理、尺寸调整、旋转等",
+        "height": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -300
+      ],
+      "id": "bcb3d5b7-5430-46f0-a527-b06cb6eaae3f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 解压数据\n该节点可以将二进制数据从原格式转换成程序可处理的json数组等",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -20
+      ],
+      "id": "511099f1-02e0-4359-a1fe-1e1a7d31e26f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "formTitle": "测试表单",
+        "formDescription": "用于测试",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        260
+      ],
+      "id": "f32418b4-db56-43f8-9876-965d8422fa90",
+      "name": "On form submission",
+      "webhookId": "86bf0302-a334-4828-ab58-a17afb349bcf"
+    },
+    {
+      "parameters": {
+        "content": "## 表单\n除了直接读取文件，还可以让用户将文件通过表单上传上来",
+        "height": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        160
+      ],
+      "id": "c452f8e5-f89b-41a2-a2f3-39bcb1cb55c4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        140
+      ],
+      "id": "315ce3fb-f741-4f10-8021-33642e03e489",
+      "name": "转换数据到二进制"
+    },
+    {
+      "parameters": {
+        "content": "## 数据转换\n可以将处理好的数据转换成需要的二进制文件格式",
+        "height": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        20
+      ],
+      "id": "f6b14d5c-1cff-4f3d-927e-d2ab534dc1c9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 数据写入\n该节点可以将二进制数据写入到磁盘\n\n**注意**：只能写入到n8n部署的机器本地",
+        "height": 660,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -340
+      ],
+      "id": "298436d7-05b0-42f3-8424-7f0fa2113630",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/n8n_data/{{ $now }}.png",
+        "dataPropertyName": "image_png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        620,
+        -180
+      ],
+      "id": "34d0c287-a312-4f95-9ff2-588d2316b0f1",
+      "name": "Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/n8n_data/{{ $now }}.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        640,
+        140
+      ],
+      "id": "0c1e11a1-dc1b-4ac2-bba5-6e4d416d1e6f",
+      "name": "Write Files from Disk"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "图片读取",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "csv文件读取",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "csv文件读取": {
+      "main": [
+        [
+          {
+            "node": "将文件内容解析成可处理形式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "图片读取": {
+      "main": [
+        [
+          {
+            "node": "对图片进行处理",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "将文件内容解析成可处理形式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "将文件内容解析成可处理形式": {
+      "main": [
+        [
+          {
+            "node": "转换数据到二进制",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "转换数据到二进制": {
+      "main": [
+        [
+          {
+            "node": "Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "对图片进行处理": {
+      "main": [
+        [
+          {
+            "node": "Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0fa86e13-a9bc-42fb-ab21-5716c563e7a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2f1ce8ea57c024a580bef98010b7171e5cb83da9fbd5c3219ab48aac1459d4be"
+  },
+  "id": "h68KBEgvKOjy9vk5",
+  "tags": []
+}
